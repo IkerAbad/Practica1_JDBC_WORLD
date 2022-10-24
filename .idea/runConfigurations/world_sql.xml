@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="world.sql" type="DatabaseScript" editBeforeRun="true" nameIsGenerated="true">
+    <script-mode>FILE</script-mode>
+    <data-source id="4d1a0fea-1b96-4e52-a727-c03f3644e5e4" />
+    <method v="2" />
+  </configuration>
+</component>
