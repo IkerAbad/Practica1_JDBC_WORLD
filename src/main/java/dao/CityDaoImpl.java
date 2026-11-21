@@ -139,63 +139,52 @@ public class CityDaoImpl {
 
     public Boolean estaCiudadEnPais(Integer codigoCiudad, String codigoPais) {
         //Devuelve verdadero en caso de que la ciudad con código codigoCiudad pertenezca al país con código codigoPais, o falso en caso contrario.
-       /* String query = "SELECT co.* FROM country co JOIN city c on co.Code = c.CountryCode AND c.ID=?";
+        String query = "SELECT 1 FROM city WHERE id = ? AND countrycode = ?";
         boolean check = false;
-
-        City city = new City();
 
         try {
             con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setInt(1, id);
+            ps.setInt(1, codigoCiudad);
+            ps.setString(2, codigoPais);
             ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                check = true;
-            }
+            check = rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return check;*/
-        return null;
+        return check;
     }
 
     public Boolean cambiarNombreCiudad(Integer codigoCiudad, String nuevoNombre) {
         //Cambiará el nombre de la ciudad con código codigoCiudad por nuevoNombre.
+        String query = "UPDATE city SET name = ? WHERE id = ?";
+        int rs = 0;
 
-        if (ifExitsCity(c1.getId())) {
-            String query = "UPDATE `city` SET `name`=?,`countrycode`=?,`district`=?,`district`=? WHERE id =?";
-            int rs = 0;
-            try {
-                PreparedStatement ps = con.prepareStatement(query);
-                ps.setString(1, c1.getName());
-                ps.setString(2, c1.getCountrycode());
-                ps.setString(3, c1.getDistrict());
-                ps.setDouble(4, c1.getPopulation());
-                ps.setInt(5, c1.getId());
-                rs = ps.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            if (rs > 0) {
-                return true;
-            }
+        try {
+            con = DatabaseConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setString(1, nuevoNombre);
+            ps.setInt(2, codigoCiudad);
+            rs = ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return false;
+        return rs > 0;
     }
 
     public void aniadirCiudad(City nuevaCiudad) {
         //Añadir una nueva ciudad a la base de datos.
         /*Comprobar si el país asociado existe. Si no existe, añadirlo.
          *Cuando el país sea añadido, insertar la ciudad en caso de que no exista en BBDD.*/
-        String query = "INSERT INTO city ( name, countrycode, district, district) values (?,?,?,?)";
+        String query = "INSERT INTO city (name, countrycode, district, population) values (?,?,?,?)";
         int res = 0;
         try {
+            con = DatabaseConnection.getConnection();
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, nuevaCiudad.getName());
             ps.setString(2, nuevaCiudad.getCountrycode());
             ps.setString(3, nuevaCiudad.getDistrict());
-            ps.setDouble(4, nuevaCiudad.getPopulation());
+            ps.setInt(4, nuevaCiudad.getPopulation());
             res = ps.executeUpdate();
 
 

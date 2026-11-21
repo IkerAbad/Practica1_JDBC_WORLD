@@ -36,7 +36,7 @@ public class Countrylanguage {
     }
 
     public void setIsofficial(String isofficial) {
-        this.isofficial = isofficial;
+        this.isofficial = isofficial.charAt(0);
     }
 
     public double getPercentage() {
