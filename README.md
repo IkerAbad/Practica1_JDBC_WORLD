@@ -1,45 +1,61 @@
 # Practica1_JDBC_WORLD
 
-Primera práctica de JDBC del ciclo de DAM (octubre de 2022). Es un proyecto Maven en Java que accede por JDBC a la base de datos de ejemplo `world` de MySQL, con el patrón DAO: una interfaz y una clase por cada tabla (`city`, `country` y `countrylanguage`) y las clases del modelo.
+**Español** | [English](#english)
 
-## Estado
+Primera práctica de JDBC del ciclo de DAM (octubre de 2022). Proyecto Maven en Java que accede por JDBC a la base de datos de ejemplo `world` de MySQL con el patrón DAO: una interfaz y una clase por cada tabla (`city`, `country` y `countrylanguage`) y las clases del modelo.
 
-Es una práctica que no llegó a terminarse del todo.
+## Qué hace cada DAO
 
-- Compila con Java 17 y Maven.
-- `CityDaoImpl` tiene hechos listar, comprobar, consultar, añadir y cambiar el nombre de una ciudad, y comprobar si una ciudad pertenece a un país. No lo he probado contra una base de datos real, solo la compilación.
-- `CountryDaoImpl` y `CountryLanguageDaoImpl` están a medias: algunas consultas todavía hay que revisarlas (por ejemplo la comprobación de si existe un país busca por `id` en lugar de por `code`).
-- `App.java` es solo una prueba manual con las llamadas comentadas.
+| DAO | Operaciones |
+|---|---|
+| `CityDaoImpl` | listar ciudades, comprobar si existe, consultar, país de una ciudad, ver si pertenece a un país, cambiar el nombre, añadir |
+| `CountryDaoImpl` | listar países, comprobar si existe (por `code`), consultar, ciudades de un país por nombre, añadir (sin duplicar) |
+| `CountryLanguageDaoImpl` | todos los idiomas, idiomas de un país |
 
-## Cómo probarlo
+Las consultas usan `PreparedStatement` y `try-with-resources`. Los listados devuelven colecciones vacías, no `null`.
 
-Hace falta tener cargada la base de datos `world` de MySQL. La conexión está escrita a mano en `src/main/java/utils/DatabaseConnection.java` (una máquina virtual local en `192.168.56.101`, usuario `user`); habrá que cambiarla por la tuya.
+## Pruebas
+
+7 pruebas JUnit contra H2 en modo MySQL con el mismo esquema que `world` (tablas `country`, `city` y `countrylanguage`), sin necesidad de MySQL:
 
 ```
-mvn compile
-mvn exec:java -Dexec.mainClass=App
+mvn test
+```
+
+Verificado con Java 21 y Maven: 7 pruebas, 0 fallos. No lo he ejecutado contra una instalación real de MySQL con los datos completos de `world`.
+
+## Ejecutarlo contra MySQL
+
+Carga la base `world` en MySQL y configura la conexión con variables de entorno (valores por defecto entre paréntesis):
+
+```
+DB_URL   (jdbc:mysql://127.0.0.1:3306/world)
+DB_USER  (user)
+DB_PASS  (user)
+```
+
+```
+mvn compile exec:java -Dexec.mainClass=App
 ```
 
 ---
 
-# Practica1_JDBC_WORLD (English)
+## English
 
-First JDBC assignment of my DAM vocational course (October 2022). A Maven project in Java that talks to MySQL's sample `world` database through JDBC using the DAO pattern: an interface and a class for each table (`city`, `country` and `countrylanguage`) plus the model classes.
+First JDBC assignment of my DAM vocational course (October 2022). A Maven project in Java that accesses MySQL's sample `world` database through JDBC using the DAO pattern: an interface and a class for each table (`city`, `country` and `countrylanguage`) plus the model classes.
 
-## Status
+### What each DAO does
 
-The assignment was never fully finished.
+- `CityDaoImpl`: list, check existence, look up, get a city's country, check membership of a country, rename, add.
+- `CountryDaoImpl`: list, check existence (by `code`), look up, list a country's cities by name, add (without duplicates).
+- `CountryLanguageDaoImpl`: all languages, languages of one country.
 
-- It builds with Java 17 and Maven.
-- `CityDaoImpl` can list, check, look up, add and rename a city, and check whether a city belongs to a country. I have only checked that it compiles, not run it against a real database.
-- `CountryDaoImpl` and `CountryLanguageDaoImpl` are half done: some queries still need fixing (for example, the check for whether a country exists looks it up by `id` instead of `code`).
-- `App.java` is just a manual test with most calls commented out.
+Queries use `PreparedStatement` and `try-with-resources`; listings return empty collections instead of `null`.
 
-## Trying it
+### Tests
 
-You need the `world` database loaded in MySQL. The connection is hardcoded in `src/main/java/utils/DatabaseConnection.java` (a local virtual machine at `192.168.56.101`, user `user`); change it to yours.
+7 JUnit tests run against H2 in MySQL mode with the same schema as `world`, so MySQL is not needed: `mvn test`. Verified with Java 21 and Maven: 7 tests, 0 failures. I have not run it against a real MySQL install loaded with the full `world` data.
 
-```
-mvn compile
-mvn exec:java -Dexec.mainClass=App
-```
+### Running against MySQL
+
+Load `world` into MySQL and set `DB_URL`, `DB_USER` and `DB_PASS` (defaults: `jdbc:mysql://127.0.0.1:3306/world`, `user`, `user`), then `mvn compile exec:java -Dexec.mainClass=App`.
